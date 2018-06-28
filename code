@@ -1,0 +1,399 @@
+
+#Load the neccessary packages
+library(MASS)
+#install.packages("Amelia")
+library(Amelia)
+#install.packages("dplyr")
+library(dplyr)
+#install.packages("ggplot2")
+library(ggplot2)
+#install.packages("corrplot")
+library(corrplot)
+#install.packages("plyr")
+library(plyr)
+#install.packages("data.table")
+library(data.table)
+######################################
+## DATA EXPLORATION##################
+####################################
+
+#i)Use descriptive statistics to explore the dataset.
+
+data("Boston")#Load the data
+
+head(Boston)#View forst few rows
+
+#Let us rename some of the variables for better understanding on variables
+setnames(Boston, old=c("crim","zn","indus","chas","nox","rm","age","dis","rad","tax","ptratio","black","lstat",
+                       "medv"),new=c("Crime","Zoned","Indus","Charles","NOX","Room","Age","Dist","Radian","Tax",
+                        "PTratio","Black","LowerStatus","medianValue"))
+
+head(Boston)
+
+names(Boston) 
+
+str(Boston)
+
+summary(Boston)#Numerical exploration
+
+hist(Boston$Crime)#To view spread of data Graphical
+
+
+Boston %>% 
+  ggplot(aes(Crime)) +
+  stat_density() + 
+  theme_bw()
+
+
+#Main exploration involves in finding missing values for further proceeding,we have an amazing package named "Amelia"to 
+#cover this task for us
+
+missmap(Boston,col = c('green','black'),y.at=1,y.labels ='',legend<-TRUE) #No data is missing
+
+#We need to check how the variables are corelated as a part of exploration using corrplot
+
+
+B <- cor(Boston)
+
+corrplot(B, method = "circle")
+
+
+##Multicollinearity check
+library(car)
+model <- lm(Crime ~ .,data=Boston)
+vif(model)#Variance Influence Factor check for Multicollinearity
+########SIMPLE LR####
+######################################
+## MODEL BUILDING##################
+####################################
+#1.Crime vs Zoned
+lm1.fit <- lm(Crime ~ Zoned, data = Boston) #Fitting simple LM
+
+names(lm1.fit)#Gives the names in model
+
+summary(lm1.fit)#Summary
+
+sum(lm1.fit$residuals^2)  #Residual Sum of Squares
+
+residuals(summary(lm1.fit))#Gives all residual valus in the model
+
+coef(lm1.fit)#Gives the co-efficient
+
+plot(Crime~Zoned, Boston) #Normal plot
+
+abline(lm1.fit,col = "red")#Abline fitting on model line
+#Model plot
+
+par(mfrow = c(2, 2))
+
+plot(lm1.fit)
+#Residual plots
+
+##################INDUS##############
+#Above comments are applicable to the below LM models till the completion of predictor variables
+
+lm2.fit <- lm(Crime ~ Indus, data = Boston)
+
+summary(lm2.fit)
+
+plot(Crime~Indus, Boston)
+
+abline(lm1.fit,col = "red")
+
+par(mfrow = c(2, 2))
+
+plot(lm2.fit)
+##################NOX#######################
+lm3.fit <- lm(Crime ~ NOX, data <- Boston)
+
+summary(lm3.fit)
+
+plot(Crime~NOX, Boston)
+
+abline(lm3.fit,col = "red")
+
+par(mfrow = c(2, 2))
+
+plot(lm3.fit)
+##########ROOM############
+lm4.fit <- lm(Crime ~ Room, data = Boston)
+
+summary(lm4.fit)
+
+plot(Crime~Room, Boston)
+
+abline(lm4.fit,col = "red")
+
+par(mfrow = c(2, 2))
+
+plot(lm4.fit)
+###############AGE####################
+lm5.fit <- lm(Crime ~ Age, data = Boston)
+
+summary(lm5.fit)
+
+plot(Crime~Age, Boston)
+
+abline(lm5.fit,col= "red")
+
+par(mfrow = c(2, 2))
+
+plot(lm5.fit)
+#########################
+lm6.fit <- lm(Crime ~ Tax, data = Boston)
+
+summary(lm6.fit)
+
+plot(Crime~Tax, Boston)
+
+abline(lm6.fit,col = "red")
+
+par(mfrow = c(2, 2))
+
+plot(lm6.fit)
+##############Radian####################
+lm7.fit <- lm(Crime ~ Radian, data = Boston)
+
+summary(lm7.fit)
+
+plot(Crime~Radian, Boston)
+
+abline(lm7.fit,col = "red")
+
+par(mfrow = c(2, 2))
+
+plot(lm7.fit)
+###############LowerStatus###########################
+lm8.fit <- lm(Crime ~ LowerStatus, data = Boston)
+
+summary(lm8.fit)
+
+plot(Crime~LowerStatus, Boston)
+
+abline(lm8.fit,col = "red")
+
+par(mfrow = c(2, 2))
+
+plot(lm8.fit)
+############medianValue################################
+
+lm9.fit <- lm(Crime ~ medianValue, data = Boston)
+
+summary(lm9.fit)
+
+plot(Crime~LowerStatus, Boston)
+
+abline(lm9.fit,col = "red")
+
+par(mfrow = c(2, 2))
+
+plot(lm9.fit)
+#############BLACK################
+lm10.fit <- lm(Crime ~ Black, data = Boston)
+
+summary(lm10.fit)
+
+plot(Crime~Black, Boston)
+
+abline(lm10.fit,col = "red")
+
+par(mfrow = c(2, 2))
+
+plot(lm10.fit)
+###########PTratio#############################
+lm11.fit <- lm(Crime ~ PTratio, data = Boston)
+
+summary(lm11.fit)
+
+plot(Crime~PTratio, Boston)
+
+abline(lm11.fit,col = "red")
+
+par(mfrow = c(2, 2))
+
+plot(lm11.fit)
+##########DIST#######################
+lm12.fit <- lm(Crime ~ Dist, data <- Boston)
+
+lm12.fit
+
+summary(lm12.fit)
+
+plot(Crime~Dist, Boston)
+
+abline(lm12.fit,col = "red")
+
+par(mfrow = c(2, 2))
+
+plot(lm12.fit)
+#################################
+lm13.fit <- lm(Crime ~ Charles, data = Boston)
+
+lm13.fit
+
+summary(lm13.fit)
+
+names(lm13.fit)
+
+coef(lm13.fit)
+
+plot(Crime~Charles, Boston)
+
+abline(lm13.fit,col = "red")
+
+par(mfrow = c(2, 2))
+
+plot(lm13.fit)
+
+plot(Crime ~ . - Crime, data <- Boston)
+############################
+###MLM-
+#####################################################
+
+mlm.fit <- lm(Crime ~ ., data <- Boston)
+typeof(mlm.fit)
+summary(mlm.fit)
+
+library(car)
+vif(mlm.fit)
+res <- residuals(mlm.fit)
+
+res <- as.data.frame(res)
+
+ggplot(res,aes(res)) +  geom_histogram(fill='blue',alpha=0.5,bins = 30) + ggtitle("MLM Residual plot")
+############################DIAGNOSTIC PLOTS to find outliers
+#par(cex.axis<-1.5, cex.lab<-1.1)
+#car::influenceIndexPlot(mlm.fit, id.n <- 5)
+#############################
+#univariate regression coefficients from (b) on the x-axis,
+#and the multiple regression coefficients from (c) on the y-axis
+uniregcoeff <- lm(Crime ~ Zoned, data = Boston)$coefficients[2]
+uniregcoeff <- append(uniregcoeff, lm(Crime ~ Indus, data = Boston)$coefficients[2])
+uniregcoeff <- append(uniregcoeff, lm(Crime ~ Charles, data = Boston)$coefficients[2])
+uniregcoeff <- append(uniregcoeff, lm(Crime ~ NOX, data = Boston)$coefficients[2])
+uniregcoeff <- append(uniregcoeff, lm(Crime ~ Room, data = Boston)$coefficients[2])
+uniregcoeff <- append(uniregcoeff, lm(Crime ~ Age, data <- Boston)$coefficients[2])
+uniregcoeff <- append(uniregcoeff, lm(Crime ~ Dist, data <- Boston)$coefficients[2])
+uniregcoeff <- append(uniregcoeff, lm(Crime ~ Radian, data <- Boston)$coefficients[2])
+uniregcoeff <- append(uniregcoeff, lm(Crime ~ Tax, data <- Boston)$coefficients[2])
+uniregcoeff <- append(uniregcoeff, lm(Crime ~ PTratio, data <- Boston)$coefficients[2])
+uniregcoeff <- append(uniregcoeff, lm(Crime ~ Black, data <- Boston)$coefficients[2])
+uniregcoeff <- append(uniregcoeff, lm(Crime ~ LowerStatus, data <- Boston)$coefficients[2])
+uniregcoeff <- append(uniregcoeff, lm(Crime ~ medianValue, data <- Boston)$coefficients[2])
+multiplereg <- (lm(Crime ~ . - Crime, data <- Boston))
+
+multiplereg$coefficients[2:14]
+
+plot(uniregcoeff, multiplereg$coefficients[2:14], main = "Univariate vs. Multiple Regression Coefficients", 
+     xlab = "Univariate", ylab = "Multiple")
+
+###################NON-LINEAR##################
+summary(lm(Crime ~ Zoned + I(Zoned^2) + I(Zoned^3), data <- Boston))
+summary(lm(Crime ~ Indus + I(Indus^2) + I(Indus^3), data <- Boston))
+summary(lm(Crime ~ Charles + I(Charles^2) + I(Charles^3), data <- Boston))
+summary(lm(Crime ~ NOX + I(NOX^2) + I(NOX^3), data <- Boston))
+summary(lm(Crime ~ Room + I(Room^2) + I(Room^3), data <- Boston))
+summary(lm(Crime ~ Age + I(Age^2) + I(Age^3), data <- Boston))
+summary(lm(Crime ~ Dist + I(Dist^2) + I(Dist^3), data <- Boston))
+summary(lm(Crime ~ Radian + I(Radian^2) + I(Radian^3), data <- Boston))
+summary(lm(Crime ~ Tax + I(Tax^2) + I(Tax^3), data <- Boston))
+summary(lm(Crime ~ PTratio + I(PTratio^2) + I(PTratio^3), data <- Boston))
+summary(lm(Crime ~ Black + I(Black^2) + I(Black^3), data <- Boston))
+summary(lm(Crime ~ LowerStatus + I(LowerStatus^2) + I(LowerStatus^3), data <- Boston))
+summary(lm(Crime ~ medianValue + I(medianValue^2) + I(medianValue^3), data <- Boston))
+###############################################
+#LOGISTIC#
+#Logistic regression is the classification modelling,we need to convert response variable to categorical variable
+
+Boston$Crime <- ifelse(Boston$Crime > median(Boston$Crime), "1", "0") 
+Boston$Crime <- as.numeric(Boston$Crime)
+head(Boston)
+log.fit <- glm(Crime ~ . -Crime, data = Boston, family = binomial)
+summary(log.fit)
+
+log.probs <- predict(log.fit, Boston, type="response")
+log.pred <- ifelse(log.probs>.5, "1","0")  
+table(Boston$Crime, log.pred) #Confusion matrix- Predicted vs Original value 
+mean(log.pred == Boston$Crime)#91.5%
+#0.9150198
+
+#1
+log1.fit <- glm(Crime ~ NOX+Radian+medianValue+Age+Tax, data = Boston, family = binomial)
+glm.probs <- predict(log1.fit,Boston,type="response")
+glm.pred <- rep(0,nrow(Boston))
+glm.pred[glm.probs > 0.5]<-1
+table(glm.pred,Boston$Crime)
+mean(glm.pred==Boston$Crime) #87.15
+
+#2
+log2.fit <- glm(Crime ~ NOX+Dist+medianValue+Tax+Radian+Age, data=Boston,family = binomial)
+summary(log2.fit)
+glm.probs <- predict(log2.fit ,Boston,type="response")
+glm.pred<-rep(0,nrow(Boston))
+glm.pred[glm.probs > 0.5]<-1
+table(glm.pred,Boston$Crime)
+mean(glm.pred==Boston$Crime)#86.56
+
+#3
+log3.fit <- glm(Crime~NOX+Radian+medianValue+Age+Tax+PTratio+Indus, data=Boston,family = binomial)
+summary(log3.fit)
+#NOX,RAD,MEDV,AGE,TAX look good
+glm.probs<-predict(log3.fit,Boston,type="response")
+glm.pred <- rep(0,nrow(Boston))
+glm.pred[glm.probs > 0.50]<-1
+table(glm.pred,Boston$Crime)
+mean(glm.pred==Boston$Crime)#85.77%
+
+#4
+log4.fit <- glm(Crime~Dist+Radian+medianValue+Zoned+NOX+LowerStatus, data=Boston,family = binomial)
+summary(log4.fit)
+glm.probs<-predict(log4.fit,Boston,type="response")
+glm.pred <- rep(0,nrow(Boston))
+glm.pred[glm.probs > 0.50]<-1
+table(glm.pred,Boston$Crime)
+mean(glm.pred==Boston$Crime)#86.95%
+#5
+log5.fit <- glm(Crime ~ NOX+Radian+medianValue+Age+Tax+Dist+Black, data <- Boston,family = binomial)
+glm.probs<-predict(log5.fit,Boston,type="response")
+glm.pred<-rep(0,nrow(Boston))
+glm.pred[glm.probs > 0.5]<-1
+table(glm.pred,Boston$Crime)
+mean(glm.pred==Boston$Crime) #87.74%
+
+############################
+###LDA
+###########################
+#1
+lda1.fit <- lda(Crime~NOX+Radian+medianValue+Age+Tax+PTratio, data<-Boston)
+summary(lda1.fit)
+lda.pred<-predict(lda1.fit,Boston)$class
+table(lda.pred,Boston$Crime)
+mean(lda.pred==Boston$Crime) #86.16%
+#2
+lda2.fit <- lda(Crime ~ LowerStatus+Age+Tax, data<-Boston)
+summary(lda1.fit)
+lda.pred<-predict(lda1.fit,Boston)$class
+table(lda.pred,Boston$Crime)
+mean(lda.pred==Boston$Crime) #86.16%
+
+#3
+lda3.fit <- lda(Crime~NOX+Radian+medianValue+Age+Tax+PTratio+Indus, data<-Boston)
+summary(lda3.fit)
+lda.pred<-predict(lda3.fit,Boston)$class
+table(lda.pred,Boston$Crime)
+mean(lda.pred==Boston$Crime) #85.77%
+
+#4
+lda4.fit <- lda(Crime~Dist+Radian+medianValue+Zoned+NOX+LowerStatus, data<-Boston)
+summary(lda4.fit)
+lda.pred<-predict(lda4.fit,Boston)$class
+table(lda.pred,Boston$Crime)
+mean(lda.pred==Boston$Crime) #86.95%
+#5
+lda5.fit <- lda(Crime ~ NOX+Radian+medianValue+Age+Tax+Dist+Black, data <- Boston)
+summary(lda5.fit)
+lda.pred<-predict(lda5.fit,Boston)$class
+table(lda.pred,Boston$Crime)
+mean(lda.pred==Boston$Crime) #86.75%
+
+###END
